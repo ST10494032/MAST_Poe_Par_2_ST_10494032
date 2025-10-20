@@ -1,54 +1,58 @@
 import React, { useState } from "react";
 import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { Ionicons } from "@expo/vector-icons";
 import HomeScreen from "./screens/HomeScreen";
 import AddItemScreen from "./screens/AddItemScreen";
 import { MenuItem } from "./types/MenuItem";
 
-export type RootStackParamList = {
-  Home: undefined;
-  AddItem: undefined;
-};
+const Tab = createBottomTabNavigator();
 
-const Stack = createNativeStackNavigator<RootStackParamList>();
-
-// 🌟 Custom Gold Theme for Navigation
-const GoldTheme = {
-  ...DefaultTheme,
-  colors: {
-    ...DefaultTheme.colors,
-    background: "#FFFDF6",
-    primary: "#D4AF37",
-    card: "#D4AF37",
-    text: "#2B2B2B",
-    border: "#B8860B",
-    notification: "#D4AF37",
-  },
-};
+// Cast to any to allow passing additional props (addMenuItem) even if the component's typings differ
+const AddItemComponent: any = AddItemScreen;
 
 export default function App() {
   const [menu, setMenu] = useState<MenuItem[]>([]);
 
-  const addMenuItem = (item: MenuItem) => {
-    setMenu((prev) => [...prev, item]);
+  const addMenuItem = (item: MenuItem) => setMenu([...menu, item]);
+
+  const GoldTheme = {
+    ...DefaultTheme,
+    colors: {
+      ...DefaultTheme.colors,
+      background: "#fffaf0",
+      primary: "#c9a227",
+      card: "#fff",
+      text: "#3a3a3a",
+      border: "#c9a227",
+      notification: "#c9a227",
+    },
   };
 
   return (
     <NavigationContainer theme={GoldTheme}>
-      <Stack.Navigator
-        screenOptions={{
-          headerStyle: { backgroundColor: "#D4AF37" },
+      <Tab.Navigator
+        screenOptions={({ route }) => ({
+          tabBarIcon: ({ color, size }) => {
+            let iconName: keyof typeof Ionicons.glyphMap = "restaurant";
+            if (route.name === "Home") iconName = "home";
+            else if (route.name === "Add Item") iconName = "add-circle";
+            return <Ionicons name={iconName} size={size} color={color} />;
+          },
+          tabBarActiveTintColor: "#c9a227",
+          tabBarInactiveTintColor: "gray",
+          headerStyle: { backgroundColor: "#c9a227" },
           headerTintColor: "#fff",
-          headerTitleStyle: { fontWeight: "bold" },
-        }}
+          tabBarStyle: { backgroundColor: "#fffaf0", borderTopColor: "#c9a227" },
+        })}
       >
-        <Stack.Screen name="Home" options={{ title: "Chef's Menu" }}>
+        <Tab.Screen name="Add Item">
+          {(props) => <AddItemComponent {...props} addMenuItem={addMenuItem} />}
+        </Tab.Screen>
+        <Tab.Screen name="Home">
           {(props) => <HomeScreen {...props} menu={menu} />}
-        </Stack.Screen>
-        <Stack.Screen name="AddItem" options={{ title: "Add Menu Item" }}>
-          {(props) => <AddItemScreen {...props} addMenuItem={addMenuItem} />}
-        </Stack.Screen>
-      </Stack.Navigator>
+        </Tab.Screen>
+      </Tab.Navigator>
     </NavigationContainer>
   );
 }
