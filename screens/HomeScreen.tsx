@@ -34,7 +34,14 @@ export default function HomeScreen({ navigation, menu }: Props) {
       <View style={styles.addButton}>
         <Button
           title="Add New Dish"
-          onPress={() => navigation.navigate("AddItem", { addMenuItem: navigation.getParent()?.getState })}
+          onPress={() =>
+            navigation.navigate("AddItem", {
+              addMenuItem: (item: MenuItem) => {
+                // placeholder: replace with real add logic or forward to parent
+                console.log("AddItem called with:", item);
+              },
+            })
+          }
         />
       </View>
     </View>
