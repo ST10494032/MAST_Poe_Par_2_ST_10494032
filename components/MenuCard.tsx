@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { MenuItem } from "../types/MenuItem";
 
-export default function MenuCard({ item }: { item: MenuItem }) {
+export default function MenuCard({ item }: { item: MenuItem & { name?: string } }) {
   return (
     <View style={styles.card}>
       <Text style={styles.name}>{item.name}</Text>

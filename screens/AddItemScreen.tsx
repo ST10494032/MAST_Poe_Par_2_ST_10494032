@@ -1,52 +1,67 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, Button, StyleSheet, Alert } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  Button,
+  StyleSheet,
+  Alert,
+  ScrollView,
+} from "react-native";
 import { Picker } from "@react-native-picker/picker";
-import { MenuItem } from "../types/MenuItem";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { RootStackParamList } from "../App";
+import { MenuItem, Course } from "../types/MenuItem";
 
-interface Props {
+type Props = NativeStackScreenProps<RootStackParamList, "AddItem"> & {
   addMenuItem: (item: MenuItem) => void;
-}
+};
 
-const COURSES = ["Starter", "Main", "Dessert", "Drink"];
+const COURSES: Course[] = ["Starters", "Mains", "Desserts", "Drinks"];
 
-export default function AddItemScreen({ addMenuItem }: Props) {
-  const [name, setName] = useState("");
+export default function AddItemScreen({ navigation, addMenuItem }: Props) {
+  const [dishName, setDishName] = useState("");
   const [description, setDescription] = useState("");
-  const [course, setCourse] = useState(COURSES[0]);
+  const [course, setCourse] = useState<Course>("Starters");
   const [price, setPrice] = useState("");
 
-  const handleAdd = () => {
-    if (!name || !description || !price) {
-      Alert.alert("Error", "Please fill all fields");
+  const handleSubmit = () => {
+    if (!dishName || !description || !price) {
+      Alert.alert("Error", "Please fill in all fields.");
       return;
     }
 
     const newItem: MenuItem = {
-      name,
+      dishName,
       description,
       course,
       price: parseFloat(price),
     };
 
     addMenuItem(newItem);
-    Alert.alert("Success", `${name} added to menu`);
-    setName("");
-    setDescription("");
-    setPrice("");
+    navigation.goBack();
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
+      <Text style={styles.header}>Add New Dish</Text>
+
       <Text style={styles.label}>Dish Name</Text>
-      <TextInput style={styles.input} value={name} onChangeText={setName} placeholder="Enter dish name" />
+      <TextInput
+        style={styles.input}
+        value={dishName}
+        onChangeText={setDishName}
+        placeholder="e.g. Lemon Butter Salmon"
+        placeholderTextColor="#B0A17B"
+      />
 
       <Text style={styles.label}>Description</Text>
       <TextInput
-        style={[styles.input, styles.textArea]}
+        style={styles.input}
         value={description}
         onChangeText={setDescription}
-        placeholder="Enter description"
-        multiline
+        placeholder="Short description of the dish"
+        placeholderTextColor="#B0A17B"
       />
 
       <Text style={styles.label}>Course</Text>
@@ -64,29 +79,47 @@ export default function AddItemScreen({ addMenuItem }: Props) {
         value={price}
         onChangeText={setPrice}
         keyboardType="numeric"
-        placeholder="Enter price"
+        placeholder="e.g. 120"
+        placeholderTextColor="#B0A17B"
       />
 
-      <Button title="Add Item" color="#c9a227" onPress={handleAdd} />
-    </View>
+      <View style={styles.buttonWrap}>
+        <Button title="Save Dish" color="#B8860B" onPress={handleSubmit} />
+      </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, backgroundColor: "#fffaf0" },
-  label: { color: "#c9a227", fontWeight: "bold", marginBottom: 5, marginTop: 10 },
-  input: {
-    backgroundColor: "#fff",
-    borderWidth: 1,
-    borderColor: "#c9a227",
-    borderRadius: 8,
-    padding: 10,
+  container: { flex: 1, backgroundColor: "#FFFDF6", padding: 20 },
+  header: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#B8860B",
+    marginBottom: 15,
+    textAlign: "center",
   },
-  textArea: { height: 80 },
+  label: { fontWeight: "bold", color: "#2B2B2B", marginTop: 10 },
+  input: {
+    borderWidth: 1,
+    borderColor: "#D4AF37",
+    borderRadius: 10,
+    padding: 10,
+    marginTop: 6,
+    backgroundColor: "#FFFFFF",
+    color: "#2B2B2B",
+  },
   pickerWrap: {
     borderWidth: 1,
-    borderColor: "#c9a227",
-    borderRadius: 8,
-    marginBottom: 15,
+    borderColor: "#D4AF37",
+    borderRadius: 10,
+    marginTop: 6,
+    backgroundColor: "#FFFFFF",
+  },
+  buttonWrap: {
+    marginTop: 20,
+    backgroundColor: "#D4AF37",
+    borderRadius: 10,
+    overflow: "hidden",
   },
 });

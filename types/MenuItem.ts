@@ -1,6 +1,8 @@
+export type Course = "Starters" | "Mains" | "Desserts" | "Drinks";
+
 export interface MenuItem {
-  name: string;
+  dishName: string;
   description: string;
-  course: string;
+  course: Course;
   price: number;
 }
