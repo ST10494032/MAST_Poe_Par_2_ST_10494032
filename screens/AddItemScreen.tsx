@@ -2,74 +2,71 @@ import React, { useState } from "react";
 import {
   View,
   Text,
-  StyleSheet,
   TextInput,
   Button,
+  StyleSheet,
   Alert,
+  ScrollView,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
-import { MenuItem } from "../types/MenuItem";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../App";
+import { MenuItem, Course } from "../types/MenuItem";
 
 type Props = NativeStackScreenProps<RootStackParamList, "AddItem"> & {
   addMenuItem: (item: MenuItem) => void;
 };
 
-const COURSES = ["Starters", "Main", "Desserts", "Drinks"];
+const COURSES: Course[] = ["Starters", "Mains", "Desserts", "Drinks"];
 
 export default function AddItemScreen({ navigation, addMenuItem }: Props) {
-  const [name, setName] = useState("");
+  const [dishName, setDishName] = useState("");
   const [description, setDescription] = useState("");
-  const [course, setCourse] = useState(COURSES[0]);
+  const [course, setCourse] = useState<Course>("Starters");
   const [price, setPrice] = useState("");
 
-  const handleAdd = () => {
-    if (!name || !description || !price) {
-      Alert.alert("Error", "Please fill in all fields");
+  const handleSubmit = () => {
+    if (!dishName || !description || !price) {
+      Alert.alert("Error", "Please fill in all fields.");
       return;
     }
 
     const newItem: MenuItem = {
-      id: Date.now().toString(),
-      name,
+      dishName,
       description,
       course,
-      price,
+      price: parseFloat(price),
     };
 
     addMenuItem(newItem);
-    Alert.alert("Success", "Dish added successfully!");
     navigation.goBack();
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.header}>Add a New Dish</Text>
+    <ScrollView style={styles.container}>
+      <Text style={styles.header}>Add New Dish</Text>
 
       <Text style={styles.label}>Dish Name</Text>
       <TextInput
         style={styles.input}
-        placeholder="Enter dish name"
-        value={name}
-        onChangeText={setName}
+        value={dishName}
+        onChangeText={setDishName}
+        placeholder="e.g. Lemon Butter Salmon"
+        placeholderTextColor="#B0A17B"
       />
 
       <Text style={styles.label}>Description</Text>
       <TextInput
-        style={[styles.input, styles.textArea]}
-        placeholder="Enter description"
+        style={styles.input}
         value={description}
         onChangeText={setDescription}
-        multiline
+        placeholder="Short description of the dish"
+        placeholderTextColor="#B0A17B"
       />
 
-      <Text style={styles.label}>Select Course</Text>
-      <View style={styles.pickerContainer}>
-        <Picker
-          selectedValue={course}
-          onValueChange={(value) => setCourse(value)}
-        >
+      <Text style={styles.label}>Course</Text>
+      <View style={styles.pickerWrap}>
+        <Picker selectedValue={course} onValueChange={(v) => setCourse(v)}>
           {COURSES.map((c) => (
             <Picker.Item key={c} label={c} value={c} />
           ))}
@@ -79,33 +76,50 @@ export default function AddItemScreen({ navigation, addMenuItem }: Props) {
       <Text style={styles.label}>Price (R)</Text>
       <TextInput
         style={styles.input}
-        placeholder="Enter price"
-        keyboardType="numeric"
         value={price}
         onChangeText={setPrice}
+        keyboardType="numeric"
+        placeholder="e.g. 120"
+        placeholderTextColor="#B0A17B"
       />
 
-      <Button title="Add Dish" onPress={handleAdd} />
-    </View>
+      <View style={styles.buttonWrap}>
+        <Button title="Save Dish" color="#B8860B" onPress={handleSubmit} />
+      </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, backgroundColor: "#fff" },
-  header: { fontSize: 24, fontWeight: "bold", marginBottom: 20 },
-  label: { fontSize: 16, marginTop: 10 },
+  container: { flex: 1, backgroundColor: "#FFFDF6", padding: 20 },
+  header: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#B8860B",
+    marginBottom: 15,
+    textAlign: "center",
+  },
+  label: { fontWeight: "bold", color: "#2B2B2B", marginTop: 10 },
   input: {
     borderWidth: 1,
-    borderColor: "#ccc",
+    borderColor: "#D4AF37",
+    borderRadius: 10,
     padding: 10,
-    borderRadius: 8,
-    marginBottom: 10,
+    marginTop: 6,
+    backgroundColor: "#FFFFFF",
+    color: "#2B2B2B",
   },
-  textArea: { height: 80 },
-  pickerContainer: {
+  pickerWrap: {
     borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
-    marginBottom: 10,
+    borderColor: "#D4AF37",
+    borderRadius: 10,
+    marginTop: 6,
+    backgroundColor: "#FFFFFF",
+  },
+  buttonWrap: {
+    marginTop: 20,
+    backgroundColor: "#D4AF37",
+    borderRadius: 10,
+    overflow: "hidden",
   },
 });

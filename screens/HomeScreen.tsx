@@ -1,8 +1,8 @@
 import React from "react";
-import { View, Text, StyleSheet, FlatList, Button } from "react-native";
-import { MenuItem } from "../types/MenuItem";
+import { View, Text, Button, FlatList, StyleSheet } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../App";
+import { MenuItem } from "../types/MenuItem";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Home"> & {
   menu: MenuItem[];
@@ -11,37 +11,32 @@ type Props = NativeStackScreenProps<RootStackParamList, "Home"> & {
 export default function HomeScreen({ navigation, menu }: Props) {
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>🍽️ Chef s Prepared Menu</Text>
-      <Text style={styles.subHeader}>Total Items: {menu.length}</Text>
+      <Text style={styles.title}>Chef’s Signature Menu</Text>
+
+      <Text style={styles.count}>Total items: {menu.length}</Text>
 
       {menu.length === 0 ? (
-        <Text style={styles.emptyText}>No dishes added yet.</Text>
+        <Text style={styles.empty}>No menu items yet. Add your first dish!</Text>
       ) : (
         <FlatList
           data={menu}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(_, i) => i.toString()}
           renderItem={({ item }) => (
             <View style={styles.card}>
-              <Text style={styles.dishName}>{item.name}</Text>
-              <Text style={styles.detail}>Course: {item.course}</Text>
-              <Text style={styles.detail}>Price: R{item.price}</Text>
-              <Text style={styles.description}>{item.description}</Text>
+              <Text style={styles.dish}>{item.dishName}</Text>
+              <Text style={styles.desc}>{item.description}</Text>
+              <Text style={styles.course}>Course: {item.course}</Text>
+              <Text style={styles.price}>R{item.price.toFixed(2)}</Text>
             </View>
           )}
         />
       )}
 
-      <View style={styles.addButton}>
+      <View style={styles.buttonWrap}>
         <Button
-          title="Add New Dish"
-          onPress={() =>
-            navigation.navigate("AddItem", {
-              addMenuItem: (item: MenuItem) => {
-                // placeholder: replace with real add logic or forward to parent
-                console.log("AddItem called with:", item);
-              },
-            })
-          }
+          title="➕ Add Menu Item"
+          color="#B8860B"
+          onPress={() => navigation.navigate("AddItem")}
         />
       </View>
     </View>
@@ -49,18 +44,42 @@ export default function HomeScreen({ navigation, menu }: Props) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, backgroundColor: "#fff" },
-  header: { fontSize: 26, fontWeight: "bold", textAlign: "center" },
-  subHeader: { fontSize: 18, marginVertical: 10, textAlign: "center" },
-  emptyText: { textAlign: "center", color: "#666", marginTop: 20 },
-  card: {
-    backgroundColor: "#f4f4f4",
-    padding: 15,
-    borderRadius: 8,
+  container: { flex: 1, padding: 20, backgroundColor: "#FFFDF6" },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#B8860B",
+    textAlign: "center",
     marginBottom: 10,
   },
-  dishName: { fontSize: 20, fontWeight: "600" },
-  detail: { fontSize: 16, color: "#444" },
-  description: { marginTop: 5, fontSize: 14, color: "#555" },
-  addButton: { marginTop: 20 },
+  count: {
+    color: "#2B2B2B",
+    fontWeight: "600",
+    marginBottom: 12,
+    textAlign: "center",
+  },
+  empty: {
+    color: "#777",
+    fontStyle: "italic",
+    textAlign: "center",
+    marginTop: 20,
+  },
+  card: {
+    borderWidth: 1,
+    borderColor: "#D4AF37",
+    borderRadius: 12,
+    padding: 12,
+    marginBottom: 10,
+    backgroundColor: "#FFFFFF",
+    shadowColor: "#D4AF37",
+    shadowOpacity: 0.2,
+    shadowOffset: { width: 0, height: 3 },
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  dish: { fontSize: 18, fontWeight: "bold", color: "#2B2B2B" },
+  desc: { color: "#4A4A4A", marginTop: 2 },
+  course: { color: "#B8860B", marginTop: 4 },
+  price: { marginTop: 6, fontWeight: "bold", color: "#2B2B2B" },
+  buttonWrap: { marginTop: 20 },
 });

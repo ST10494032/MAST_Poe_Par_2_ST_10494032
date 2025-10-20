@@ -1,7 +1,8 @@
-export type MenuItem = {
-  id: string;
-  name: string;
+export type Course = "Starters" | "Mains" | "Desserts" | "Drinks";
+
+export interface MenuItem {
+  dishName: string;
   description: string;
-  course: string;
-  price: string;
-};
+  course: Course;
+  price: number;
+}
