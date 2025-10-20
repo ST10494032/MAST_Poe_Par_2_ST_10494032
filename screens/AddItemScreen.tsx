@@ -1,7 +1,13 @@
 import React, { useState } from "react";
 import {
-  View, Text, StyleSheet, TextInput, Button, Alert, Picker,
+  View,
+  Text,
+  StyleSheet,
+  TextInput,
+  Button,
+  Alert,
 } from "react-native";
+import { Picker } from "@react-native-picker/picker";
 import { MenuItem } from "../types/MenuItem";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../App";
