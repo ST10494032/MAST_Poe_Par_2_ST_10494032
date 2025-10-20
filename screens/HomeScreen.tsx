@@ -11,7 +11,7 @@ type Props = NativeStackScreenProps<RootStackParamList, "Home"> & {
 export default function HomeScreen({ navigation, menu }: Props) {
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>🍽️ Chef’s Prepared Menu</Text>
+      <Text style={styles.header}>🍽️ Chef s Prepared Menu</Text>
       <Text style={styles.subHeader}>Total Items: {menu.length}</Text>
 
       {menu.length === 0 ? (
