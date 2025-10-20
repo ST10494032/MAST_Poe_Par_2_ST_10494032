@@ -1,54 +1,39 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { Ionicons } from "@expo/vector-icons";
 import HomeScreen from "./screens/HomeScreen";
 import AddItemScreen from "./screens/AddItemScreen";
 import { MenuItem } from "./types/MenuItem";
 
 export type RootStackParamList = {
-  Home: undefined;
-  AddItem: undefined;
+  Splash: undefined;
+  Main: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
-
-// 🌟 Custom Gold Theme for Navigation
-const GoldTheme = {
-  ...DefaultTheme,
-  colors: {
-    ...DefaultTheme.colors,
-    background: "#FFFDF6",
-    primary: "#D4AF37",
-    card: "#D4AF37",
-    text: "#2B2B2B",
-    border: "#B8860B",
-    notification: "#D4AF37",
-  },
-};
+const Tab = createBottomTabNavigator();
 
 export default function App() {
   const [menu, setMenu] = useState<MenuItem[]>([]);
+  const [showSplash, setShowSplash] = useState(true);
 
-  const addMenuItem = (item: MenuItem) => {
-    setMenu((prev) => [...prev, item]);
+  const addMenuItem = (item: MenuItem) => setMenu([...menu, item]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setShowSplash(false), 2500);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const GoldTheme = {
+    ...DefaultTheme,
+    colors: {
+      ...DefaultTheme.colors,
+      background: "#fffaf0",
+      primary: "#c9a227",
+      card: "#fff",
+      text: "#3a3a3a",
+    }
   };
-
-  return (
-    <NavigationContainer theme={GoldTheme}>
-      <Stack.Navigator
-        screenOptions={{
-          headerStyle: { backgroundColor: "#D4AF37" },
-          headerTintColor: "#fff",
-          headerTitleStyle: { fontWeight: "bold" },
-        }}
-      >
-        <Stack.Screen name="Home" options={{ title: "Chef's Menu" }}>
-          {(props) => <HomeScreen {...props} menu={menu} />}
-        </Stack.Screen>
-        <Stack.Screen name="AddItem" options={{ title: "Add Menu Item" }}>
-          {(props) => <AddItemScreen {...props} addMenuItem={addMenuItem} />}
-        </Stack.Screen>
-      </Stack.Navigator>
-    </NavigationContainer>
-  );
 }
